@@ -1,0 +1,10 @@
+{
+  "vid01": { 
+    "title": "Bài 1: Nhập môn", "youtube_id": "zOjov-2OZ0E", 
+    "desc": "Video giới thiệu khóa học" 
+  },
+  "vid02": { 
+    "title": "Bài 2: Vòng lặp", "youtube_id": "_uQrJ0TkZlc", 
+    "desc": "Hướng dẫn vòng lặp For/While" 
+  }
+}

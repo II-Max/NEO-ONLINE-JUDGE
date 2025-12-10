@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Cài Đặt Hệ Thống NEO ONLINE JUDGE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e293b;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --text: #334155;
+            --code-bg: #1e1e1e;
+            --code-text: #d4d4d4;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+        
+        .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+        
+        /* HEADER */
+        header { text-align: center; margin-bottom: 50px; border-bottom: 2px solid #e2e8f0; padding-bottom: 30px; }
+        h1 { color: var(--secondary); font-size: 2.5rem; margin-bottom: 10px; font-weight: 800; }
+        .subtitle { color: #64748b; font-size: 1.1rem; }
+
+        /* SECTIONS */
+        section { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+        h3 { color: var(--secondary); margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem; border-left: 4px solid var(--accent); padding-left: 10px; }
+        p { margin-bottom: 15px; }
+        
+        /* LISTS */
+        ol { padding-left: 20px; margin-bottom: 20px; }
+        li { margin-bottom: 10px; }
+        
+        /* CODE BLOCKS */
+        .code-box { background: var(--code-bg); color: var(--code-text); padding: 15px; border-radius: 6px; font-family: monospace; font-size: 0.95rem; margin: 15px 0; border-left: 5px solid var(--accent); overflow-x: auto; }
+        .code-box span { color: #6a9955; } /* Comment color */
+
+        /* ALERTS */
+        .alert { padding: 15px; border-radius: 6px; margin: 20px 0; display: flex; gap: 15px; align-items: start; }
+        .alert-warning { background: #fffbeb; border: 1px solid #fcd34d; color: #92400e; }
+        .alert-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .alert i { font-size: 1.2rem; margin-top: 3px; }
+
+        /* BUTTONS */
+        .btn-link { display: inline-block; background: var(--primary); color: #fff; padding: 5px 15px; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: 0.2s; }
+        .btn-link:hover { background: #1d4ed8; }
+
+        /* IMAGES Placeholder styling */
+        .img-placeholder {
+            background: #f1f5f9; border: 2px dashed #cbd5e1; color: #94a3b8;
+            padding: 20px; text-align: center; border-radius: 8px; margin: 15px 0; font-style: italic;
+        }
+
+        /* CHECKLIST */
+        .checkbox { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .checkbox input { width: 18px; height: 18px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>HƯỚNG DẪN VẬN HÀNH HỆ THỐNG</h1>
+            <p class="subtitle">Tài liệu chi tiết dành cho người quản trị (Admin) - NEO ONLINE JUDGE</p>
+        </header>
+
+        <section>
+            <h2><i class="fa-solid fa-download"></i> Phần 1: Cài Đặt Phần Mềm Cần Thiết</h2>
+            <p>Trước khi bắt đầu, hãy đảm bảo máy tính của bạn đã cài đặt 3 phần mềm sau. Nếu chưa, hãy tải về và cài đặt (chỉ cần bấm Next liên tục).</p>
+            
+            <div class="alert alert-info">
+                <i class="fa-solid fa-circle-info"></i>
+                <div>
+                    <strong>Lưu ý:</strong> Sau khi cài đặt xong cả 3 phần mềm, hãy <strong>Khởi động lại máy tính</strong> để hệ thống nhận diện.
+                </div>
+            </div>
+
+            <ol>
+                <li>
+                    <strong>Node.js (Môi trường chạy Web):</strong><br>
+                    Tải bản "LTS" (Khuyên dùng) tại: <a href="https://nodejs.org/" target="_blank" class="btn-link">Trang chủ Node.js</a>
+                </li>
+                <li>
+                    <strong>Python (Môi trường chạy máy chấm):</strong><br>
+                    Tải tại: <a href="https://www.python.org/downloads/" target="_blank" class="btn-link">Trang chủ Python</a><br>
+                    <div class="alert alert-warning">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div><strong>QUAN TRỌNG:</strong> Ở màn hình cài đặt đầu tiên, bạn PHẢI tích vào ô vuông nhỏ <strong>"Add Python to PATH"</strong>. Nếu quên bước này, máy chấm sẽ không chạy được!</div>
+                    </div>
+                </li>
+                <li>
+                    <strong>VS Code (Để sửa code dễ dàng):</strong><br>
+                    Tải tại: <a href="https://code.visualstudio.com/" target="_blank" class="btn-link">Trang chủ VS Code</a>
+                </li>
+            </ol>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-cloud"></i> Phần 2: Tạo "Nhà Riêng" Trên Google</h2>
+            <p>Hệ thống cần một nơi để lưu trữ dữ liệu online. Chúng ta sẽ dùng Google Firebase (Miễn phí).</p>
+
+            <h3>Bước 1: Tạo Dự Án Mới</h3>
+            <ol>
+                <li>Truy cập <a href="https://console.firebase.google.com/" target="_blank">console.firebase.google.com</a> và đăng nhập Gmail.</li>
+                <li>Bấm <strong>Create a project</strong> (hoặc dấu cộng).</li>
+                <li>Đặt tên dự án (Ví dụ: <code>NEO ONLINE JUDGE</code>) -> Bấm Continue -> Tắt Google Analytics -> Bấm <strong>Create Project</strong>.</li>
+            </ol>
+
+            <h3>Bước 2: Bật Cơ Sở Dữ Liệu (Database)</h3>
+            <ol>
+                <li>Menu bên trái, chọn <strong>Build</strong> -> <strong>Realtime Database</strong>.</li>
+                <li>Bấm <strong>Create Database</strong> -> Chọn Location (US) -> Next.</li>
+                <li>Chọn chế độ <strong>Start in Test Mode</strong> -> Bấm <strong>Enable</strong>.</li>
+                <li>Copy đường link bắt đầu bằng <code>https://...</code> ở đầu bảng dữ liệu. (Lưu lại để dùng sau).</li>
+            </ol>
+
+            <h3>Bước 3: Bật Đăng Nhập & Lưu Trữ File</h3>
+            <ul>
+                <li><strong>Đăng nhập:</strong> Vào <strong>Build</strong> -> <strong>Authentication</strong> -> Get Started -> Tab <strong>Sign-in method</strong> -> Chọn <strong>Google</strong> -> Bật <strong>Enable</strong> -> Chọn email hỗ trợ -> Save.</li>
+                <li><strong>Lưu file:</strong> Vào <strong>Build</strong> -> <strong>Storage</strong> -> Get Started -> Next -> Done.</li>
+            </ul>
+
+            <h3>Bước 4: Lấy "Chìa Khóa" (Quan trọng nhất)</h3>
+            <ol>
+                <li>Bấm vào biểu tượng <strong>Bánh răng ⚙️</strong> (cạnh chữ Project Overview góc trái trên) -> Chọn <strong>Project settings</strong>.</li>
+                <li><strong>Lấy Chìa Khóa Máy Chấm:</strong>
+                    <ul>
+                        <li>Chọn tab <strong>Service accounts</strong>.</li>
+                        <li>Bấm nút <strong>Generate new private key</strong> -> Bấm Generate Key.</li>
+                        <li>Máy sẽ tải về 1 file <code>.json</code>. Hãy đổi tên nó thành <code>service-account.json</code>.</li>
+                        <li><strong>Copy file này bỏ vào thư mục dự án</strong> (Để chung chỗ với file <code>judge.py</code>).</li>
+                    </ul>
+                </li>
+                <li><strong>Lấy Chìa Khóa Web:</strong>
+                    <ul>
+                        <li>Vẫn ở Project settings, kéo xuống dưới cùng.</li>
+                        <li>Bấm vào biểu tượng <strong>`&lt;/&gt;`</strong> (Web).</li>
+                        <li>Đặt tên App (gì cũng được) -> Bấm <strong>Register app</strong>.</li>
+                        <li>Copy đoạn mã trong ngoặc nhọn <code>const firebaseConfig = { ... };</code>.</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-plug"></i> Phần 3: Kết Nối Code Với Google</h2>
+            <p>Bây giờ hãy mở thư mục dự án (Project) mà bạn đã tải về máy tính lên.</p>
+
+            <h3>Bước 1: Điền Chìa Khóa Web</h3>
+            <p>Vào thư mục <code>public</code>, dùng VS Code hoặc Notepad mở lần lượt các file: <code>index.html</code>, <code>problems.html</code>, <code>solve.html</code>, <code>documents.html</code>, <code>videos.html</code>, <code>rank.html</code>.</p>
+            <p>Tìm đoạn code cũ và thay bằng đoạn code mới bạn vừa copy ở trên:</p>
+            <div class="code-box">
+const firebaseConfig = {
+    apiKey: "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY",
+    authDomain: "...",
+    databaseURL: "DÁN_LINK_DATABASE_BẠN_LẤY_Ở_BƯỚC_2_VÀO_ĐÂY", <span>// Đừng quên dòng này!</span>
+    projectId: "...",
+    ...
+};
+            </div>
+
+            <h3>Bước 2: Cài Đặt Môi Trường (Chạy 1 lần duy nhất)</h3>
+            <p>Tại thư mục dự án, bấm chuột phải vào khoảng trống -> Chọn <strong>Open in Terminal</strong> (hoặc gõ <code>cmd</code> vào thanh địa chỉ thư mục rồi Enter).</p>
+            <p>Gõ lần lượt các lệnh sau (Sau mỗi lệnh bấm Enter và đợi chạy xong):</p>
+            
+            <div class="code-box">
+<span># 1. Cài công cụ đẩy web</span>
+npm install -g firebase-tools
+
+<span># 2. Cài thư viện cho máy chấm Python</span>
+pip install firebase-admin
+            </div>
+
+            <h3>Bước 3: Đăng Nhập & Khởi Tạo</h3>
+            <div class="code-box">
+<span># 1. Đăng nhập Google</span>
+firebase login
+<span>(Nó sẽ bật trình duyệt, bạn chọn đúng Gmail vừa tạo dự án)</span>
+
+<span># 2. Kết nối dự án</span>
+firebase init
+            </div>
+            
+            <div class="alert alert-info">
+                <i class="fa-solid fa-list-check"></i>
+                <div>
+                    <strong>Hướng dẫn chọn khi chạy lệnh 'firebase init':</strong><br>
+                    1. Dùng mũi tên xuống chọn <strong>Hosting</strong> (bấm phím Cách để chọn) -> Enter.<br>
+                    2. Chọn <strong>Use an existing project</strong> -> Enter.<br>
+                    3. Chọn tên dự án bạn vừa tạo trên web -> Enter.<br>
+                    4. "Public directory?" -> Gõ: <strong>public</strong> -> Enter.<br>
+                    5. "Single-page app?" -> Gõ: <strong>N</strong> -> Enter.<br>
+                    6. "Github?" -> Gõ: <strong>N</strong> -> Enter.<br>
+                    7. "Overwrite index.html?" -> Gõ: <strong>N</strong> (Tuyệt đối chọn No để không mất code).
+                </div>
+            </div>
+
+            <h3>Bước 4: Đưa Web Lên Mạng (Deploy)</h3>
+            <p>Gõ lệnh cuối cùng:</p>
+            <div class="code-box">firebase deploy</div>
+            <p>Sau khi xong, nó sẽ hiện đường link <code>https://...web.app</code>. Đó chính là trang web của bạn! Hãy gửi link đó cho mọi người.</p>
+        </section>
+
+        <section>
+            <h2><i class="fa-solid fa-rocket"></i> Phần 4: Vận Hành Hệ Thống (Hằng Ngày)</h2>
+            
+            <h3>1. Nạp Dữ Liệu (Bài tập, Tài liệu)</h3>
+            <p>Khi bạn muốn thêm bài tập hoặc tài liệu mới:</p>
+            <ul>
+                <li>Mở file <code>baitap.json</code> hoặc <code>tailieu.json</code> trên máy tính để sửa nội dung.</li>
+                <li>Mở CMD, chạy lệnh: <code>python upload_manager.py</code></li>
+                <li>Hệ thống sẽ tự động cập nhật lên web.</li>
+            </ul>
+
+            <h3>2. Chạy Máy Chấm (BẮT BUỘC KHI THI)</h3>
+            <div class="alert alert-warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                    <strong>LƯU Ý QUAN TRỌNG:</strong> Website nằm trên Google, nhưng bộ não chấm điểm nằm trên máy tính của bạn. <br>
+                    Vì vậy, khi học sinh đang làm bài, <strong>máy tính của bạn phải luôn bật và đang chạy lệnh dưới đây.</strong>
+                </div>
+            </div>
+            <ol>
+                <li>Mở CMD tại thư mục dự án.</li>
+                <li>Gõ lệnh: 
+                    <div class="code-box" style="margin: 5px 0">python judge.py</div>
+                </li>
+                <li>Giữ nguyên cửa sổ đen đó. Khi có ai nộp bài, nó sẽ hiện dòng chữ thông báo chấm điểm.</li>
+            </ol>
+        </section>
+
+        <footer style="text-align: center; margin-top: 50px; color: #64748b; font-size: 0.9rem;">
+            <p>© 2026 NEO ONLINE JUDGE Project Documentation.</p>
+        </footer>
+    </div>
+
+</body>
+</html>

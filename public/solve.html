@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Coding Space | NEO ONLINE JUDGE 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE STYLE --- */
+        :root { --bg-dark: #05070a; --panel: #0f1115; --neon: #00f3ff; --text: #c0cdd1; }
+        body { background: var(--bg-dark); color: var(--text); font-family: 'JetBrains Mono', monospace; display: flex; flex-direction: column; height: 100vh; margin: 0; overflow: hidden; }
+        
+        /* Navbar */
+        nav { height: 50px; background: #000; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .back-btn { color: #888; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
+        .back-btn:hover { color: #fff; }
+
+        /* Layout */
+        .container { display: flex; flex: 1; height: calc(100vh - 50px); }
+        .left { width: 35%; padding: 20px; border-right: 1px solid #333; background: var(--panel); overflow-y: auto; }
+        .right { width: 65%; display: flex; flex-direction: column; background: #111; }
+        
+        /* Language Selector */
+        .lang-select {
+            background: #1f293a; color: #fff; border: 1px solid #333; padding: 5px 10px;
+            font-family: inherit; cursor: pointer; border-radius: 4px; margin-right: 10px;
+        }
+
+        textarea { flex: 1; background: #151820; color: #0f0; border: none; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 15px; resize: none; outline: none; }
+        
+        .controls { padding: 15px; background: #000; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .btn-submit { padding: 10px 30px; background: var(--neon); color: #000; border: none; font-weight: bold; cursor: pointer; border-radius: 4px; }
+        .btn-submit:disabled { background: #555; cursor: not-allowed; }
+        #log { font-size: 0.9rem; color: #888; }
+        
+        .example-box { background: #1a1d26; padding: 15px; margin: 15px 0; border: 1px dashed #444; border-radius: 4px; }
+        code { color: var(--neon); display: block; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="problems.html" class="back-btn">⮜ DANH SÁCH</a>
+        <div>
+            <select id="lang-selector" class="lang-select" onchange="changeLang()">
+                <option value="python">Python 3</option>
+                <option value="cpp">C++ (G++)</option>
+            </select>
+            <span id="user-display" style="color:var(--neon)">Checking...</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="left">
+            <h2 id="title" style="margin-top:0">Đang tải...</h2>
+            <p id="desc" style="line-height: 1.6; color: #ccc"></p>
+            <div class="example-box">
+                <strong>Input:</strong> <code id="in">...</code><br>
+                <strong>Output:</strong> <code id="out">...</code>
+            </div>
+        </div>
+        
+        <div class="right">
+            <textarea id="code" spellcheck="false" placeholder="Loading template..."></textarea>
+            <div class="controls">
+                <span id="log">Sẵn sàng.</span>
+                <button class="btn-submit" onclick="submitCode()" id="btnSubmit">CHẤM BÀI (RUN)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // CONFIG DỰ ÁN CỦA BẠN
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV2kn1Cmg_7VcZRr6KXrqIsRVwPva6Dm8",
+            authDomain: "khkt2025-2026.firebaseapp.com",
+            databaseURL: "https://khkt2025-2026-default-rtdb.firebaseio.com",
+            projectId: "khkt2025-2026",
+            storageBucket: "khkt2025-2026.firebasestorage.app",
+            messagingSenderId: "826139105664",
+            appId: "1:826139105664:web:130efecd1b7c4f702d4965"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+        
+        const params = new URLSearchParams(window.location.search);
+        const pid = params.get('id');
+        let currentUser = null;
+
+        // CODE MẪU
+        const templates = {
+            python: `# Nhập code Python:\nimport sys\n\n# Đọc input\nlines = sys.stdin.read().split()\n\nif len(lines) >= 2:\n    a = int(lines[0])\n    b = int(lines[1])\n    print(a + b)`,
+            cpp: `// Nhập code C++:\n#include <iostream>\nusing namespace std;\n\nint main() {\n    int a, b;\n    // Đọc input\n    if (cin >> a >> b) {\n        cout << a + b;\n    }\n    return 0;\n}`
+        };
+
+        // ĐỔI NGÔN NGỮ
+        function changeLang() {
+            const lang = document.getElementById('lang-selector').value;
+            const editor = document.getElementById('code');
+            editor.value = ""; // Xóa code cũ
+            editor.placeholder = templates[lang];
+        }
+
+        auth.onAuthStateChanged(user => {
+            if(!user) { alert("Vui lòng đăng nhập!"); window.location.href = "index.html"; }
+            else {
+                currentUser = user;
+                document.getElementById('user-display').innerText = user.displayName;
+                loadProblemData();
+                changeLang(); // Set placeholder ban đầu
+            }
+        });
+
+        function loadProblemData() {
+            if(!pid) return;
+            db.ref('problems/' + pid).once('value', snap => {
+                const data = snap.val();
+                if(data) {
+                    document.getElementById('title').innerText = data.title;
+                    document.getElementById('desc').innerText = data.description;
+                    document.getElementById('in').innerText = data.example_input;
+                    document.getElementById('out').innerText = data.example_output;
+                }
+            });
+        }
+
+        function submitCode() {
+            const code = document.getElementById('code').value;
+            const lang = document.getElementById('lang-selector').value; // Lấy ngôn ngữ đang chọn
+
+            if(!code.trim()) return alert("Chưa nhập code!");
+
+            const btn = document.getElementById('btnSubmit');
+            const log = document.getElementById('log');
+
+            btn.disabled = true;
+            btn.innerText = "ĐANG CHẤM...";
+            log.innerText = `>> Đang gửi code ${lang.toUpperCase()}...`;
+            log.style.color = "yellow";
+
+            const sid = Date.now().toString();
+            const ref = db.ref('submissions/' + sid);
+
+            ref.set({
+                problem_id: pid,
+                code: code,
+                language: lang, // Gửi thêm trường ngôn ngữ
+                status: 'pending',
+                uid: currentUser.uid,
+                score: 0,
+                name: currentUser.displayName || "Ẩn danh",
+                avatar: currentUser.photoURL || ""
+            });
+
+            ref.on('value', snap => {
+                const data = snap.val();
+                if(data && data.status === 'completed') {
+                    btn.disabled = false;
+                    btn.innerText = "CHẤM BÀI (RUN)";
+                    log.innerHTML = `KẾT QUẢ: <b style="font-size: 1.1rem">${data.score} ĐIỂM</b> | ${data.message}`;
+                    log.style.color = data.score == 100 ? "#0aff60" : "#ff0055";
+                    ref.off();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thư Viện Tài Liệu Số</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- 1. GIAO DIỆN CHUNG --- */
+        :root { --bg: #05070a; --card: #111625; --neon: #00f3ff; --pink: #ff0055; --green: #0aff60; }
+        body { background: var(--bg); color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; }
+        
+        /* MENU */
+        .cyber-nav { background: rgba(0,0,0,0.95); border-bottom: 1px solid var(--neon); padding: 0 30px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+        .nav-links a { text-decoration: none; color: #8b9bb4; margin-left: 20px; transition: 0.3s; font-size: 0.9rem; }
+        .nav-links a.active { color: #fff; text-shadow: 0 0 5px #fff; border-bottom: 2px solid var(--pink); padding-bottom: 5px; }
+
+        /* DANH SÁCH TÀI LIỆU */
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .doc-item { 
+            background: var(--card); border: 1px solid #2a3b55; padding: 20px; margin-bottom: 15px; 
+            display: flex; align-items: center; justify-content: space-between; border-radius: 8px; transition: 0.3s; 
+        }
+        .doc-item:hover { border-color: var(--neon); transform: translateX(5px); box-shadow: 0 0 15px rgba(0,243,255,0.1); }
+        
+        .doc-icon { font-size: 2.2rem; margin-right: 20px; color: var(--neon); width: 50px; text-align: center; }
+        .doc-info h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
+        .doc-meta { font-size: 0.8rem; color: #888; }
+        
+        .btn-view { 
+            background: rgba(0, 243, 255, 0.1); color: var(--neon); border: 1px solid var(--neon); 
+            padding: 8px 25px; font-weight: bold; cursor: pointer; border-radius: 4px; transition: 0.3s;
+        }
+        .btn-view:hover { background: var(--neon); color: #000; box-shadow: 0 0 10px var(--neon); }
+
+        /* --- MODAL XEM TÀI LIỆU (CẢI TIẾN) --- */
+        #doc-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 9999;
+            display: none; flex-direction: column;
+        }
+        
+        .modal-header {
+            height: 60px; background: #111; border-bottom: 1px solid var(--neon);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 20px;
+        }
+        .modal-title { font-weight: bold; color: var(--neon); text-transform: uppercase; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        /* Nút công cụ trên header modal */
+        .modal-actions { display: flex; gap: 15px; align-items: center; }
+        .btn-external {
+            background: var(--pink); color: #fff; border: none; padding: 5px 15px; 
+            border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; text-decoration: none;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .btn-external:hover { background: #ff4d88; }
+        .close-btn { background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; line-height: 1; }
+        .close-btn:hover { color: var(--pink); }
+
+        .modal-body { flex: 1; position: relative; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; display: block; }
+        
+        /* Thông báo khi đang tải hoặc lỗi */
+        .loading-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #888; z-index: -1; text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="cyber-nav">
+        <div style="color:var(--neon); font-weight:bold; font-size:1.2rem">[ NEO ONLINE JUDGE ]</div>
+        <div class="nav-links">
+            <a href="problems.html">KHO BÀI TẬP</a>
+            <a href="about.html">★ GIỚI THIỆU</a>
+            <a href="documents.html" class="active">TÀI LIỆU</a>
+            <a href="videos.html">VIDEO</a>
+            <a href="rank.html">BXH TOP 10</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 style="border-bottom: 1px solid #333; padding-bottom: 10px; color: var(--neon)">
+            <i class="fa-solid fa-folder-open"></i> THƯ VIỆN TÀI LIỆU SỐ
+        </h2>
+        <div id="doc-list">
+            <div style="text-align:center; padding:20px; color:#888">Đang tải dữ liệu từ máy chủ...</div>
+        </div>
+    </div>
+
+    <div id="doc-modal">
+        <div class="modal-header">
+            <span class="modal-title" id="modal-doc-title">Document Viewer</span>
+            <div class="modal-actions">
+                <a id="btn-open-new" href="#" target="_blank" class="btn-external">
+                    <i class="fa-solid fa-up-right-from-square"></i> MỞ TAB MỚI
+                </a>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="loading-text">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 10px;"></i><br>
+                Đang tải nội dung...<br>
+                <small style="color:#555">(Nếu không xem được, hãy bấm nút "Mở Tab Mới" ở góc trên)</small>
+            </div>
+            <iframe id="doc-frame" src=""></iframe>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        // CONFIG CHUẨN CỦA DỰ ÁN BẠN
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV2kn1Cmg_7VcZRr6KXrqIsRVwPva6Dm8",
+            authDomain: "khkt2025-2026.firebaseapp.com",
+            databaseURL: "https://khkt2025-2026-default-rtdb.firebaseio.com",
+            projectId: "khkt2025-2026",
+            storageBucket: "khkt2025-2026.firebasestorage.app",
+            messagingSenderId: "826139105664",
+            appId: "1:826139105664:web:130efecd1b7c4f702d4965"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        // TẢI DANH SÁCH TÀI LIỆU
+        firebase.database().ref('documents').once('value', snap => {
+            const data = snap.val();
+            const div = document.getElementById('doc-list');
+            div.innerHTML = "";
+            
+            if(data) {
+                Object.values(data).forEach(doc => {
+                    let iconClass = "fa-file";
+                    let color = "#fff";
+                    const type = doc.type.toUpperCase();
+                    
+                    if(type === 'PDF') { iconClass = "fa-file-pdf"; color = "#ff0055"; }
+                    else if(['DOC','DOCX'].includes(type)) { iconClass = "fa-file-word"; color = "#00f3ff"; }
+                    else if(['XLS','XLSX'].includes(type)) { iconClass = "fa-file-excel"; color = "#0aff60"; }
+                    else if(['PPT','PPTX'].includes(type)) { iconClass = "fa-file-powerpoint"; color = "#ffcc00"; }
+                    
+                    div.innerHTML += `
+                        <div class="doc-item">
+                            <div style="display:flex; align-items:center">
+                                <div class="doc-icon" style="color:${color}">
+                                    <i class="fa-solid ${iconClass}"></i>
+                                </div>
+                                <div class="doc-info">
+                                    <h3>${doc.title}</h3>
+                                    <div class="doc-meta">
+                                        <span style="border:1px solid #444; padding:2px 6px; border-radius:4px; font-size:0.7rem">${type}</span> 
+                                        | ${doc.date}
+                                    </div>
+                                    <div style="font-size:0.85rem; color:#aaa; margin-top:5px;">${doc.desc}</div>
+                                </div>
+                            </div>
+                            <button class="btn-view" onclick="viewDocument('${doc.url}', '${type}', '${doc.title}')">
+                                <i class="fa-regular fa-eye"></i> XEM NGAY
+                            </button>
+                        </div>
+                    `;
+                });
+            } else { 
+                div.innerHTML = "<div style='text-align:center; padding:30px; color:#666'>Chưa có tài liệu nào.</div>"; 
+            }
+        });
+
+        // --- HÀM XỬ LÝ XEM TÀI LIỆU THÔNG MINH ---
+        function viewDocument(url, type, title) {
+            const modal = document.getElementById('doc-modal');
+            const frame = document.getElementById('doc-frame');
+            const titleEl = document.getElementById('modal-doc-title');
+            const btnOpenNew = document.getElementById('btn-open-new'); // Nút dự phòng
+            
+            titleEl.innerText = title;
+            btnOpenNew.href = url; // Gán link gốc cho nút mở tab mới
+            modal.style.display = 'flex';
+
+            // Xử lý link Google Drive (Chuyển view -> preview để nhúng tốt hơn)
+            if (url.includes('drive.google.com')) {
+                let cleanUrl = url;
+                if(cleanUrl.includes('/view')) {
+                    cleanUrl = cleanUrl.replace('/view', '/preview');
+                } else if(cleanUrl.includes('/edit')) {
+                    cleanUrl = cleanUrl.replace('/edit', '/preview');
+                }
+                
+                // Nếu link chưa có /preview thì thêm vào (trường hợp link share id)
+                if (!cleanUrl.includes('/preview') && !cleanUrl.includes('export=')) {
+                     // Nếu dạng id=... thì giữ nguyên, nếu dạng file/d/... thì thêm preview
+                     if(cleanUrl.includes('/file/d/')) cleanUrl += '/preview';
+                }
+                
+                frame.src = cleanUrl;
+            } 
+            // Xử lý file Office (Word, Excel...) dùng Google Docs Viewer
+            else if (['DOC', 'DOCX', 'XLS', 'XLSX', 'PPT', 'PPTX'].includes(type.toUpperCase())) {
+                frame.src = `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`;
+            } 
+            // Các loại khác (PDF direct link)
+            else {
+                frame.src = url;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('doc-modal');
+            const frame = document.getElementById('doc-frame');
+            modal.style.display = 'none';
+            frame.src = "about:blank"; // Xóa trắng iframe để dừng tải
+        }
+    </script>
+</body>
+</html>

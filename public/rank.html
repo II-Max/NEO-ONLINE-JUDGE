@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Bảng Xếp Hạng Top 10</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { background: #05070a; color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; }
+        
+        /* MENU */
+        .cyber-nav { background: rgba(0,0,0,0.9); border-bottom: 1px solid #00f3ff; padding: 0 30px; height: 60px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(5px); }
+        .nav-links a { text-decoration: none; color: #8b9bb4; margin-left: 20px; transition: 0.3s; }
+        .nav-links a.active { color: #fff; text-shadow: 0 0 5px #fff; }
+
+        /* CONTAINER */
+        .container { max-width: 900px; margin: 50px auto; padding: 0 20px; text-align: center; }
+        .rank-title { font-size: 2.5rem; color: #00f3ff; text-shadow: 0 0 20px #00f3ff; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 3px; }
+        
+        /* TABLE STYLE */
+        .rank-table { 
+            width: 100%; border-collapse: separate; border-spacing: 0 10px; 
+        }
+        .rank-table th { 
+            text-align: left; padding: 15px 20px; color: #8b9bb4; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;
+        }
+        .rank-row { background: #111625; transition: 0.3s; }
+        .rank-row:hover { transform: scale(1.02); background: #1a2133; }
+        .rank-row td { padding: 15px 20px; vertical-align: middle; border-top: 1px solid #2a3b55; border-bottom: 1px solid #2a3b55; }
+        .rank-row td:first-child { border-left: 1px solid #2a3b55; border-radius: 8px 0 0 8px; }
+        .rank-row td:last-child { border-right: 1px solid #2a3b55; border-radius: 0 8px 8px 0; }
+
+        /* USER INFO */
+        .user-cell { display: flex; align-items: center; gap: 15px; }
+        .u-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #333; object-fit: cover; }
+        .u-name { font-weight: bold; font-size: 1.1rem; }
+
+        /* TOP 3 STYLES */
+        .rank-1 .rank-num { font-size: 1.5rem; color: #ffd700; text-shadow: 0 0 10px #ffd700; }
+        .rank-1 .u-avatar { border-color: #ffd700; box-shadow: 0 0 10px #ffd700; }
+        .rank-1 .u-name { color: #ffd700; text-shadow: 0 0 5px #ffd700; }
+
+        .rank-2 .rank-num { font-size: 1.4rem; color: #c0c0c0; text-shadow: 0 0 10px #c0c0c0; }
+        .rank-2 .u-avatar { border-color: #c0c0c0; }
+        .rank-2 .u-name { color: #c0c0c0; }
+
+        .rank-3 .rank-num { font-size: 1.3rem; color: #cd7f32; text-shadow: 0 0 10px #cd7f32; }
+        .rank-3 .u-avatar { border-color: #cd7f32; }
+        .rank-3 .u-name { color: #cd7f32; }
+
+    </style>
+</head>
+<body>
+    <nav class="cyber-nav">
+        <div style="color:#00f3ff; font-weight:bold; font-size:1.2rem">[ NEO ONLINE JUDGE ]</div>
+        <div class="nav-links">
+            <a href="problems.html">KHO BÀI TẬP</a>
+            <a href="about.html">★ GIỚI THIỆU</a>
+            <a href="documents.html">TÀI LIỆU</a>
+            <a href="videos.html">VIDEO</a>
+            <a href="rank.html" class="active">BXH TOP 10</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="rank-title">🏆 Hall of Fame 🏆</h1>
+        <table class="rank-table">
+            <thead>
+                <tr>
+                    <th width="10%">#</th>
+                    <th width="50%">Học Sinh</th>
+                    <th width="20%">Số bài</th>
+                    <th width="20%" style="text-align:right">Tổng điểm</th>
+                </tr>
+            </thead>
+            <tbody id="rank-body">
+                <tr><td colspan="4" style="text-align:center; padding:30px; color:#888">Đang tải dữ liệu...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        // CONFIG CHUẨN CỦA BẠN (Đã điền sẵn)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV2kn1Cmg_7VcZRr6KXrqIsRVwPva6Dm8",
+            authDomain: "khkt2025-2026.firebaseapp.com",
+            databaseURL: "https://khkt2025-2026-default-rtdb.firebaseio.com",
+            projectId: "khkt2025-2026",
+            storageBucket: "khkt2025-2026.firebasestorage.app",
+            messagingSenderId: "826139105664",
+            appId: "1:826139105664:web:130efecd1b7c4f702d4965"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        firebase.database().ref('submissions').on('value', snap => {
+            const data = snap.val();
+            if(!data) { document.getElementById('rank-body').innerHTML = "<tr><td colspan='4' style='text-align:center; padding:20px'>Chưa có dữ liệu</td></tr>"; return; }
+
+            // 1. Tổng hợp dữ liệu
+            const users = {};
+            Object.values(data).forEach(s => {
+                if(s.status !== 'completed') return;
+                
+                // Khởi tạo user nếu chưa có
+                if(!users[s.uid]) {
+                    users[s.uid] = { 
+                        // Lấy tên và avatar mới nhất (nếu có), nếu không thì dùng mặc định
+                        name: s.name || "Ẩn danh", 
+                        avatar: s.avatar || `https://ui-avatars.com/api/?name=${s.name || 'User'}&background=random`,
+                        total: 0, 
+                        solved: 0, 
+                        probs: {} 
+                    };
+                }
+                
+                // Cập nhật tên/avatar nếu bài nộp này mới hơn (đơn giản hóa là lấy bài nộp bất kỳ có data)
+                if(s.name) users[s.uid].name = s.name;
+                if(s.avatar) users[s.uid].avatar = s.avatar;
+
+                // Tính điểm cao nhất cho từng bài
+                if(!users[s.uid].probs[s.problem_id] || parseInt(s.score) > users[s.uid].probs[s.problem_id]) {
+                    users[s.uid].probs[s.problem_id] = parseInt(s.score);
+                }
+            });
+
+            // 2. Tính tổng điểm và Sắp xếp
+            const ranking = Object.values(users).map(u => {
+                let total = 0, solved = 0;
+                Object.values(u.probs).forEach(s => { 
+                    total += s; 
+                    if(s === 100) solved++; 
+                });
+                return { name: u.name, avatar: u.avatar, total, solved };
+            }).sort((a,b) => b.total - a.total).slice(0, 10); // Lấy Top 10
+
+            // 3. Render ra HTML
+            const tbody = document.getElementById('rank-body');
+            tbody.innerHTML = "";
+            
+            ranking.forEach((u, i) => {
+                let rankClass = "";
+                let medal = "";
+                
+                if(i === 0) { rankClass = "rank-1"; medal = "👑"; }
+                else if(i === 1) { rankClass = "rank-2"; medal = "🥈"; }
+                else if(i === 2) { rankClass = "rank-3"; medal = "🥉"; }
+
+                tbody.innerHTML += `
+                    <tr class="rank-row ${rankClass}">
+                        <td class="rank-num">#${i+1}</td>
+                        <td>
+                            <div class="user-cell">
+                                <img src="${u.avatar}" class="u-avatar">
+                                <span class="u-name">${medal} ${u.name}</span>
+                            </div>
+                        </td>
+                        <td style="color:#00f3ff; font-weight:bold">${u.solved}</td>
+                        <td style="text-align:right; color:#0aff60; font-weight:bold; font-size:1.2rem">${u.total}</td>
+                    </tr>
+                `;
+            });
+        });
+    </script>
+</body>
+</html>

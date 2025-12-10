@@ -1,0 +1,10 @@
+{
+  "doc01": { 
+    "title": "Sách Giáo Khoa Python", "type": "PDF", 
+    "date": "10/10/2025", "url": "https://google.com", "desc": "Sách cơ bản" 
+  },
+  "doc02": { 
+    "title": "Đề thi năm ngoái", "type": "ZIP", 
+    "date": "12/10/2025", "url": "https://google.com", "desc": "Tổng hợp đề thi" 
+  }
+}

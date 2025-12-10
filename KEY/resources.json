@@ -1,0 +1,12 @@
+{
+  "documents": {
+    "doc01": { "title": "Giáo trình Python Cơ Bản", "type": "PDF", "date": "2023-10-01", "url": "#", "desc": "Tài liệu nhập môn cho người mới bắt đầu." },
+    "doc02": { "title": "Giải thuật & Cấu trúc dữ liệu", "type": "DOCX", "date": "2023-10-05", "url": "#", "desc": "Các thuật toán sắp xếp, tìm kiếm nâng cao." },
+    "doc03": { "title": "Đề thi HSG Quốc Gia 2023", "type": "ZIP", "date": "2023-11-20", "url": "#", "desc": "Tổng hợp đề thi và đáp án tham khảo." }
+  },
+  "videos": {
+    "vid01": { "title": "Lộ trình học Lập trình từ số 0", "youtube_id": "zOjov-2OZ0E", "desc": "Video hướng dẫn định hướng tư duy." },
+    "vid02": { "title": "Python trong 1 giờ", "youtube_id": "_uQrJ0TkZlc", "desc": "Tổng hợp kiến thức Python cấp tốc." },
+    "vid03": { "title": "Cấu trúc dữ liệu là gì?", "youtube_id": "RBSGKlAvoiM", "desc": "Giải thích khái niệm Stack, Queue, Linked List." }
+  }
+}

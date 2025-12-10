@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Bài Giảng</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #05070a; color: #fff; font-family: 'JetBrains Mono', monospace; margin: 0; }
+        .cyber-nav { background: rgba(0,0,0,0.9); border-bottom: 1px solid #00f3ff; padding: 0 30px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+        .nav-links a { text-decoration: none; color: #8b9bb4; margin-left: 20px; }
+        .nav-links a.active { color: #fff; text-shadow: 0 0 5px #fff; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 30px; }
+        .vid-card { background: #111; border: 1px solid #333; border-radius: 8px; overflow: hidden; transition: 0.3s; }
+        .vid-card:hover { border-color: #ff0055; transform: translateY(-5px); }
+        .vid-frame { width: 100%; aspect-ratio: 16/9; background: #000; }
+        .vid-info { padding: 15px; }
+        .vid-title { color: #00f3ff; font-weight: bold; margin-bottom: 5px; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <nav class="cyber-nav">
+        <div style="color:#00f3ff; font-weight:bold; font-size:1.2rem">[ NEO ONLINE JUDGE ]</div>
+        <div class="nav-links">
+            <a href="problems.html">KHO BÀI TẬP</a>
+            <a href="about.html">★ GIỚI THIỆU</a>
+            <a href="documents.html">TÀI LIỆU</a>
+            <a href="videos.html" class="active">VIDEO</a>
+            <a href="rank.html">BXH TOP 10</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 style="color: #ff0055">KHO VIDEO HƯỚNG DẪN</h2>
+        <div class="grid" id="vid-list">Đang tải video...</div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV2kn1Cmg_7VcZRr6KXrqIsRVwPva6Dm8",
+            authDomain: "khkt2025-2026.firebaseapp.com",
+            databaseURL: "https://khkt2025-2026-default-rtdb.firebaseio.com",
+            projectId: "khkt2025-2026",
+            storageBucket: "khkt2025-2026.firebasestorage.app",
+            messagingSenderId: "826139105664",
+            appId: "1:826139105664:web:130efecd1b7c4f702d4965"
+        };
+        firebase.initializeApp(firebaseConfig);
+        
+        firebase.database().ref('videos').once('value', snap => {
+            const data = snap.val();
+            const div = document.getElementById('vid-list');
+            div.innerHTML = "";
+            if(data) {
+                Object.values(data).forEach(vid => {
+                    div.innerHTML += `
+                        <div class="vid-card">
+                            <iframe class="vid-frame" src="https://www.youtube.com/embed/${vid.youtube_id}" frameborder="0" allowfullscreen></iframe>
+                            <div class="vid-info">
+                                <div class="vid-title">${vid.title}</div>
+                                <div style="color:#888; font-size:0.9rem">${vid.desc}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else { div.innerHTML = "Chưa có video nào."; }
+        });
+    </script>
+</body>
+</html>

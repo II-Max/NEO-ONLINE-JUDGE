@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>NEO ONLINE JUDGE - GATEWAY</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. NỀN CYBERPUNK ĐỘNG --- */
+        :root {
+            --neon-blue: #00f3ff;
+            --neon-pink: #ff0055;
+            --bg-dark: #05070a;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+            /* Hiệu ứng lưới nền chuyển động */
+            background-image: linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveGrid 5s linear infinite;
+        }
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0,243,255,0.1) 0%, var(--bg-dark) 80%);
+            pointer-events: none;
+        }
+
+        /* --- 2. TIÊU ĐỀ GLITCH --- */
+        .glitch-container {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            position: relative;
+            color: var(--neon-blue);
+            text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-blue);
+            animation: glitch 1s infinite;
+        }
+        h1::before, h1::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            background: var(--bg-dark);
+        }
+        h1::before {
+            left: 2px;
+            text-shadow: -1px 0 var(--neon-pink);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+        h1::after {
+            left: -2px;
+            text-shadow: -1px 0 var(--neon-blue);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch { 0% { text-shadow: 2px 2px var(--neon-pink), -2px -2px var(--neon-blue); } 25% { text-shadow: -2px 2px var(--neon-pink), 2px -2px var(--neon-blue); } 50% { text-shadow: 2px -2px var(--neon-pink), -2px 2px var(--neon-blue); } 100% { text-shadow: -2px -2px var(--neon-pink), 2px 2px var(--neon-blue); } }
+        @keyframes glitch-anim { 0% { clip: rect(17px, 9999px, 92px, 0); transform: skew(0.86deg); } 50% { clip: rect(56px, 9999px, 33px, 0); transform: skew(0.33deg); } 100% { clip: rect(45px, 9999px, 15px, 0); transform: skew(0.09deg); } }
+        @keyframes glitch-anim-2 { 0% { clip: rect(68px, 9999px, 5px, 0); transform: skew(0.49deg); } 50% { clip: rect(15px, 9999px, 91px, 0); transform: skew(0.87deg); } 100% { clip: rect(81px, 9999px, 13px, 0); transform: skew(0.08deg); } }
+
+        /* --- 3. DÒNG GIỚI THIỆU & TRẠNG THÁI --- */
+        p.subtitle {
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            letter-spacing: 4px;
+            margin-top: -20px;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+        #msg {
+            margin-bottom: 30px;
+            color: #8b9bb4;
+            font-size: 0.9rem;
+            position: relative;
+            padding: 10px 20px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            background: rgba(0, 243, 255, 0.05);
+            display: inline-block;
+        }
+        #msg::before { content: '[ '; color: var(--neon-blue); }
+        #msg::after { content: ' ]'; color: var(--neon-blue); }
+
+        /* --- 4. NÚT ĐĂNG NHẬP NEON --- */
+        .cyber-btn {
+            position: relative;
+            display: none; /* Mặc định ẩn, hiện khi cần */
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--neon-blue);
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            overflow: hidden;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+        .cyber-btn:hover {
+            background: var(--neon-blue);
+            color: var(--bg-dark);
+            box-shadow: 0 0 30px var(--neon-blue);
+        }
+        .cyber-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            transition: 0.5s;
+        }
+        .cyber-btn:hover::before { left: 100%; }
+        .loading-spinner {
+            display: inline-block; width: 20px; height: 20px;
+            border: 3px solid rgba(0,243,255,0.3); border-radius: 50%;
+            border-top-color: var(--neon-blue); animation: spin 1s ease-in-out infinite; margin-right: 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    
+    <div class="glitch-container">
+        <h1 data-text="KHKT 2026">NEO ONLINE JUDGE</h1>
+        <p class="subtitle">CYBER LEARNING SYSTEM // V1.0</p>
+    </div>
+
+    <div id="msg">
+        <span class="loading-spinner"></span> Đang kết nối máy chủ...
+    </div>
+
+    <button id="btnLogin" class="cyber-btn" onclick="login()">
+        ▶ KÍCH HOẠT QUYỀN TRUY CẬP (GOOGLE)
+    </button>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDV2kn1Cmg_7VcZRr6KXrqIsRVwPva6Dm8",
+            authDomain: "khkt2025-2026.firebaseapp.com",
+            projectId: "khkt2025-2026",
+            storageBucket: "khkt2025-2026.firebasestorage.app",
+            messagingSenderId: "826139105664",
+            appId: "1:826139105664:web:130efecd1b7c4f702d4965"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        auth.onAuthStateChanged((user) => {
+            const msg = document.getElementById('msg');
+            const btn = document.getElementById('btnLogin');
+            if (user) {
+                msg.innerHTML = `<span style="color:var(--neon-green)">✓ XÁC THỰC THÀNH CÔNG.</span> Xin chào <b style="color:var(--neon-blue)">${user.displayName}</b>. Đang chuyển hướng...`;
+                btn.style.display = "none";
+                setTimeout(() => window.location.href = "problems.html", 1500);
+            } else {
+                msg.innerHTML = "Vui lòng đăng nhập để truy cập hệ thống.";
+                btn.style.display = "inline-block";
+            }
+        });
+
+        function login() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithPopup(provider).catch(error => {
+                document.getElementById('msg').innerText = "Lỗi đăng nhập: " + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
